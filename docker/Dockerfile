@@ -17,7 +17,7 @@ RUN apt-get update && apt-get install -y build-essential
 RUN make build-linux
 
 
-FROM debian:bookworm-slim
+FROM debian:13.4-slim
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
