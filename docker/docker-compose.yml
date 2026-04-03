@@ -1,0 +1,61 @@
+services:
+  db:
+    image: postgres:15-alpine
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - mattermost-internal
+    volumes:
+      - /mattermost-data/mattermost-db-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=mattermost
+      - POSTGRES_USER=${POSTGRES_USER:-mattermost}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-mattermost}
+
+  mattermost:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - mattermost-internal
+    depends_on:
+      - db
+    volumes:
+      - /mattermost-data/mattermost-data:/opt/mattermost/data
+      - /mattermost-data/mattermost-config:/opt/mattermost/config
+      - /mattermost-data/mattermost-logs:/opt/mattermost/logs
+      - /mattermost-data/mattermost-plugins:/opt/mattermost/plugins
+      - /mattermost-data/mattermost-client-plugins:/opt/mattermost/client/plugins
+    environment:
+      - MM_SQLSETTINGS_DRIVERNAME=postgres
+      - MM_SQLSETTINGS_DATASOURCE=postgres://${POSTGRES_USER:-mattermostu}:${POSTGRES_PASSWORD:-mattermostP}@db:5432/mattermost?sslmode=disable&connect_timeout=10
+      - MM_SERVICESETTINGS_SITEURL=${MM_SITEURL:-https://mattermost}
+
+  web:
+    image: nginx:alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - mattermost-internal
+    depends_on:
+      - mattermost
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+networks:
+  mattermost-internal:
+    driver: bridge
+
+volumes:
+  mattermost-db-data:
+  mattermost-data:
+  mattermost-config:
+  mattermost-logs:
+  mattermost-plugins:
+  mattermost-client-plugins:
