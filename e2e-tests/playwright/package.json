@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "@mattermost/client": "file:../../webapp/platform/client",
-    "@mattermost/playwright-lib": "*",
+    "@mattermost/playwright-lib": "11.3.0",
     "@mattermost/types": "file:../../webapp/platform/types"
   },
   "devDependencies": {
