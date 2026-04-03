@@ -4,10 +4,10 @@
   "description": "This repository holds the API reference documentation for Mattermost available at https://developers.mattermost.com/api-reference",
   "main": "index.js",
   "dependencies": {
-    "@redocly/cli": "^1.28.4",
+    "@redocly/cli": "^2.19.2",
     "swagger-cli": "4.0.4",
     "sync-fetch": "0.4.1",
-    "yaml": "2.2.2"
+    "yaml": "2.8.3"
   },
   "overrides": {
     "node-fetch": {
